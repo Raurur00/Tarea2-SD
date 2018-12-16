@@ -4,7 +4,6 @@ import java.rmi.Naming;
 import java.rmi.server.UnicastRemoteObject;
 
 
-
 public class Proceso  extends UnicastRemoteObject implements InterfaceProceso
 {
 
@@ -22,15 +21,14 @@ public class Proceso  extends UnicastRemoteObject implements InterfaceProceso
     throws Exception
   {
     System.setProperty("java.security.policy","file:/C:/Users/Pablo/Desktop/Git/Tarea2-SD/Proceso.policy");
-        
+    
+    
     if (System.getSecurityManager() == null) {
       System.setSecurityManager(new SecurityManager());
     }
 
     try
     {
-        System.setProperty("java.rmi.server.hostname","192.168.0.12");
-        //System.setProperty("java.security.policy","file:/C:/Users/Pablo/Desktop/Git/Tarea2-SD/Proceso.policy");
         InterfaceProceso k = new Proceso();
         Naming.rebind("Proceso", k);
         System.out.println("Proceso Registrado.");
