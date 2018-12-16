@@ -1,39 +1,48 @@
-import java.rmi.RemoteException;
-import java.rmi.Remote;
-import java.rmi.Naming;
-import java.rmi.server.UnicastRemoteObject;
-
-
-public class Proceso  extends UnicastRemoteObject implements InterfaceProceso
+public class Proceso 
 {
+    public int id;
 
-    public Proceso()
-    throws RemoteException
-  {}
-    
-    public  String eco(String id)
-    throws RemoteException, Exception
+    public Proceso(int id)
     {
-        return "funciona";
+        id = this.id;
     }
 
-    public static void main(String[] args)
-    throws Exception
-  {
-    System.setProperty("java.security.policy","file:/C:/Users/Pablo/Desktop/Git/Tarea2-SD/Proceso.policy");
-    
-    
-    if (System.getSecurityManager() == null) {
-      System.setSecurityManager(new SecurityManager());
-    }
-
-    try
+    public static void main (String[] args)
     {
-        InterfaceProceso k = new Proceso();
-        Naming.rebind("Proceso", k);
-        System.out.println("Proceso Registrado.");
-    }   catch (RemoteException e) {
-      e.printStackTrace();
+        String id = args[0];
+        String[] id_vecinos = args[1].split(",");
+        String isIni = args[2];
+
+        if (isIni.equals("false"))
+        {
+            try
+            {
+                ProcesoServer P = new ProcesoServer();
+                P.listen(id);
+            }   catch (Exception e) {
+               e.printStackTrace();
+            }  
+            
+        }
+
+        else if (isIni.equals("true"))
+        {
+            try
+            {
+                ProcesoClient P = new ProcesoClient();
+                for (int i = 0;i < id_vecinos.length; i++)
+                {
+                    P.invocar(id_vecinos[i]);
+                }
+                
+            }   catch (Exception e) {
+               e.printStackTrace();
+            }
+        }
+
+        else
+        {
+            System.out.println("tercer argumento invalido");
+        }
     }
-  }
 }
