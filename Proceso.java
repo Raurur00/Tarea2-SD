@@ -12,8 +12,7 @@ public class Proceso  extends UnicastRemoteObject implements InterfaceProceso
     throws RemoteException
   {}
     
-    public  String eco(String id)
-    throws RemoteException, Exception
+    public  String eco(String id) throws RemoteException, Exception
     {
         return "funciona";
     }
