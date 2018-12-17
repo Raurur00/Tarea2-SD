@@ -1,10 +1,14 @@
 public class Proceso 
 {
     public int id;
+    public int num_vecinos;
+    public int exp_recibidos;
 
-    public Proceso(int id)
+    public Proceso(int id, int num_vecinos)
     {
-        id = this.id;
+        this.id = id;
+        this.num_vecinos = num_vecinos;
+        this.exp_recibidos = 0;
     }
 
     public static void main (String[] args)
@@ -17,11 +21,33 @@ public class Proceso
         {
             try
             {
-                ProcesoServer P = new ProcesoServer();
-                P.listen(id);
+                Proceso P = new Proceso(Integer.parseInt(id), id_vecinos.length);
+                ProcesoServer P1 = new ProcesoServer(Integer.parseInt(id), id_vecinos.length);
+                ProcesoClient P2 = new ProcesoClient(Integer.parseInt(id));
+                InterfaceProceso k = new ProcesoServer(Integer.parseInt(id), id_vecinos.length);
+
+                //espera algun mensaje de un vecino
+                //while (P1.exp_recibidos == k.getExpRec())
+                while (P.exp_recibidos < id_vecinos.length)
+                {
+                    P1.listen(id, k);
+                    //si recibio un mensaje con id mayor al actual
+                    if (k.ifgetMensaje())
+                    {
+                        P.id = k.getId();
+                        P.exp_recibidos++;
+
+                        //envia mensajes a vecinos, sin incluir el vecino del msj entrante
+                        for (int i = 0;i < id_vecinos.length; i++)
+                        {
+                            P2.invocar(id_vecinos[i]);
+                        }
+                    }
+                }
+                
             }   catch (Exception e) {
                e.printStackTrace();
-            }  
+            } 
             
         }
 
@@ -29,12 +55,17 @@ public class Proceso
         {
             try
             {
-                ProcesoClient P = new ProcesoClient();
+                Proceso P = new Proceso(Integer.parseInt(id), id_vecinos.length);
+                ProcesoClient P1 = new ProcesoClient(Integer.parseInt(id));
+                ProcesoServer P2 = new ProcesoServer(Integer.parseInt(id), id_vecinos.length);
+                InterfaceProceso k = new ProcesoServer(Integer.parseInt(id), id_vecinos.length);
+
+                //send id's
                 for (int i = 0;i < id_vecinos.length; i++)
                 {
-                    P.invocar(id_vecinos[i]);
+                    P1.invocar(id_vecinos[i]);
                 }
-                
+
             }   catch (Exception e) {
                e.printStackTrace();
             }
