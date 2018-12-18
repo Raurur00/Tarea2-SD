@@ -21,6 +21,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         this.num_vecinos = num_vecinos;
         this.exp_recibidos = 0;
         this.getMensaje = false;
+        this.mensaje = "";
     }
 
     public void invocar(String id) 
@@ -32,7 +33,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
             try {
                 Registry registry = LocateRegistry.getRegistry(host);
                 InterfaceProceso stub = (InterfaceProceso) registry.lookup("Proceso" + id);
-                String response = stub.explorer(Integer.toString(this.id));
+                mensaje = stub.explorer(Integer.toString(this.id));
                 System.out.println(this.id + " manda explorer a " + id);
                 flag = false;
             } catch (Exception e) {
@@ -48,7 +49,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
       	return id;
   	}
     
-      public  String explorer(String id)
+    public  String explorer(String id)
   	throws RemoteException, Exception
   	{
     	//ignora mensajes explorer con id menor al actual
@@ -62,7 +63,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         + "Coordinador acutal: " + Integer.toString(this.idCoordinador));
     	this.exp_recibidos ++;
     
-    	return id;
+    	return Integer.toString(this.idCoordinador);
     }
     
     public static void listen(String id, InterfaceProceso k)

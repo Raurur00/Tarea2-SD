@@ -20,20 +20,20 @@ public class Proceso
             }
 
             //Espera algun mensaje de un vecino
-            while (PClient.exp_recibidos < id_vecinos.length)
+            while (true)
             {
                 ProcesoClient.listen(id, PClient);
                 //Si recibio un mensaje con id mayor al actual
                 if (PClient.getMensaje)
                 {
                     PClient.exp_recibidos++;
+                    System.out.println(PClient.mensaje);
                     //envia mensajes a vecinos, sin incluir el vecino del msj entrante
                     for (int i = 0;i < id_vecinos.length; i++)
                     {
                         PClient.invocar(id_vecinos[i]);
                     }
                 }
-                
             }
         }catch(Exception e){
             e.printStackTrace();
