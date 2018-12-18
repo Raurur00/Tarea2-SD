@@ -4,7 +4,7 @@ import java.rmi.registry.Registry;
 public class client {
 
     private client() {}
-
+    //Conexión con servidor (Esto debe ser ejecutado por el proceso coordinador)
     public static void main(String[] args) {
 
         String host = "10.10.2.214";
