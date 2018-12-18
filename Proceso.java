@@ -12,6 +12,7 @@ public class Proceso
             //Si es iniciador
             if (isIni.equals("true"))
             {
+                PClient.idCoordinador = PClient.id;
                 //send id's
                 for (int i = 0;i < id_vecinos.length; i++)
                 {
@@ -24,15 +25,19 @@ public class Proceso
             {
                 ProcesoClient.listen(id, PClient);
                 //Si recibio un mensaje con id mayor al actual
-                if (PClient.getMensaje)
+                if (PClient.sendExplorer)
                 {
-                    PClient.exp_recibidos++;
-                    System.out.println(PClient.mensaje);
                     //envia mensajes a vecinos, sin incluir el vecino del msj entrante
                     for (int i = 0;i < id_vecinos.length; i++)
                     {
-                        PClient.invocar(id_vecinos[i]);
+                        if (Integer.parseInt(id_vecinos[i]) != PClient.FL)
+                            PClient.invocar(id_vecinos[i]);
                     }
+                    PClient.sendExplorer = false;
+                }
+                if (PClient.sendEco)
+                {
+                    
                 }
             }
         }catch(Exception e){
