@@ -13,6 +13,7 @@ public class Proceso
             if (isIni.equals("true"))
             {
                 PClient.idCoordinador = PClient.id;
+                PClient.iniciador = true;
                 //send id's
                 for (int i = 0;i < id_vecinos.length; i++)
                 {
@@ -37,7 +38,11 @@ public class Proceso
                 }
                 if (PClient.sendEco)
                 {
-                    
+                    PClient.invocarEco(Integer.toString(PClient.FL));
+                    PClient.sendEco = false;
+                }
+                if (PClient.coordinador){
+                    //do staf here
                 }
             }
         }catch(Exception e){
