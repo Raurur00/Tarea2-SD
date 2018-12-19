@@ -9,7 +9,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public int id;
     public int idCoordinador;
     public int num_vecinos;
-    public int num_echos;
+    public int num_mensajes;
     public boolean sendExplorer;
     public boolean sendEco;
     public int FL;
@@ -27,26 +27,36 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         this.FL = -1;
         this.iniciador = false;
         this.coordinador = false;
+        this.num_mensajes = 0;
     }
 
     public  String eco(String id)
   	throws RemoteException, Exception
   	{
-        System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco de " + id);
-        this.num_echos++;//Si llega un eco se suma 1 al contador de ecos
-        //Si es iniciador y el numero de ecos recibidos es igual al numero de vecinos,
-        //el nodo es el nuevo coordinador
-        if (this.iniciador){
-            if (this.num_echos == this.num_vecinos){
-                this.coordinador = true;
-                System.out.println("Soy Coordinador");
+        System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco coordinador: " + id);
+        if (Integer.toString(id) == Integer.toString(this.idCoordinador))
+        {
+            this.num_mensajes++;//Si llega un eco se suma 1 al contador de mensajes
+            //Si es iniciador y el numero de mensajes recibidos es igual al numero de vecinos,
+            //el nodo es el nuevo coordinador
+            if (this.num_mensajes == this.num_vecinos)
+            {
+                if (this.iniciador){
+                    if (this.num_mensajes == this.num_vecinos){
+                        this.coordinador = true;
+                        System.out.println("Soy Coordinador");
+                    }
+                } else {
+                    //Si no es iniciador y el numero de mensajes recibidos es igual al numero de vecinos menos 1,
+                    //el nodo mando un eco
+                    this.sendEco = true;
+                }   
             }
-        } else {
-            //Si no es iniciador y el numero de ecos recibidos es igual al numero de vecinos menos 1,
-            //el nodo mando un eco
-            if (this.num_echos == (this.num_vecinos - 1)){
-                this.sendEco = true;
-            }
+            
+        }
+        else if Integer.toString(id) < Integer.toString(this.idCoordinador))
+        {
+            System.out.println("Se extingue eco");
         }
         
       	return id;
@@ -67,7 +77,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
             this.idCoordinador = Integer.parseInt(idCoord);
             System.out.println("Nuevo Coordinador: " + Integer.toString(this.idCoordinador));
             this.FL = Integer.parseInt(idNodo);
-            this.num_echos = 0;
+            this.num_mensajes = 1;
             this.sendExplorer = true;
         } 
         /* 
@@ -79,23 +89,25 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
             - Si es igual manda un eco
         */
         else if (Integer.parseInt(idCoord) == this.idCoordinador) {
-            this.num_echos++;
-            if (this.iniciador){
-                if (this.num_echos == this.num_vecinos){
+            this.num_mensajes++;
+            if (this.num_mensajes == (this.num_vecinos))
+            {
+                if (this.iniciador)
+                {
                     this.coordinador = true;
                     System.out.println("Soy Coordinador");
-                }
-            } else {
-                if (this.num_echos == (this.num_vecinos - 1)){
+                }   else    {
                     this.sendEco = true;
                 }
+            
             }
+            //Si el nodo solo tiene un vecinos y recibe un explorer, manda un eco
+            if (this.num_vecinos == 1 ){
+                this.sendEco = true;
+            }     
+        }   else    {
+            System.out.println("Se extingue explorer");
         }
-        //Si el nodo no tiene solo un vecinos y recibe un explorer, manda un eco
-        if ((this.num_vecinos - 1) == 0 ){
-            this.sendEco = true;
-        }     
-    }
 
     public void invocar(String id) 
     {
@@ -124,7 +136,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
             try {
                 Registry registry = LocateRegistry.getRegistry(host);
                 InterfaceProceso stub = (InterfaceProceso) registry.lookup("Proceso" + id);
-                stub.eco(Integer.toString(this.id));
+                stub.eco(Integer.toString(this.idCoordinador));
                 System.out.println("Nodo " + this.id + " manda eco a " + id);
                 flag = false;
             } catch (Exception e) {
@@ -136,7 +148,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public static void listen(String id, InterfaceProceso k)
   	throws Exception
   	{
-    	System.setProperty("java.security.policy","file:/C:/Users/javie/Documents/GitHub/Tarea2-SD/Proceso.policy");
+    	System.setProperty("java.security.policy","file:/C:/Users/Pablo/Desktop/Git/Tarea2-SD/Proceso.policy");
      
     	if (System.getSecurityManager() == null) {
       		System.setSecurityManager(new SecurityManager());
