@@ -33,10 +33,11 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public  String eco(String id)
   	throws RemoteException, Exception
   	{
-        System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco coordinador: " + id);
         if (Integer.parseInt(id) == this.idCoordinador)
         {
             this.num_mensajes++;
+            System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco coordinador: " + id 
+            + ", mensajes: " + this.num_mensajes);
             /*Si llega un eco se suma 1 al contador de mensajes
             Si es iniciador y el numero de mensajes recibidos es igual al numero de vecinos,
             el nodo es el nuevo coordinador */
@@ -45,7 +46,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                 if (this.iniciador){
                     if (this.num_mensajes == this.num_vecinos){
                         this.coordinador = true;
-                        System.out.println("Soy Coordinador");
+                        System.out.println("Soy Coordinador (" + this.id + ")");
                     }
                 } else {
                     /*Si no es iniciador y el numero de mensajes recibidos es igual al numero de vecinos menos 1,
@@ -57,7 +58,8 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         }
         else if (Integer.parseInt(id) < this.idCoordinador)
         {
-            System.out.println("Se extingue eco");
+            System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco coordinador: " + id +
+            ", Se extingue");
         }
         
       	return id;
@@ -66,7 +68,6 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public  void explorer(String idCoord, String idNodo)
   	throws RemoteException, Exception
   	{
-        System.out.println("Nodo " + Integer.toString(this.id) + " recibe explorer de " + idNodo);
         /* 
         Si el coordinador recibido es mayor al coordiandor actual:
          - Cambia al coordiandor
@@ -74,12 +75,19 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
          - Pone el contador de ecos en 0
          - Manda explorers a los vecions
         */
-    	if (Integer.parseInt(idCoord) > this.idCoordinador) {
+    	if (Integer.parseInt(idCoord) > this.idCoordinador) 
+        {
+            this.iniciador = false;
             this.idCoordinador = Integer.parseInt(idCoord);
-            System.out.println("Nuevo Coordinador: " + Integer.toString(this.idCoordinador));
+            System.out.println("Nodo " + Integer.toString(this.id) + " recibe explorer de " + idNodo +
+            ", Nuevo Coordinador: " + Integer.toString(this.idCoordinador));
             this.FL = Integer.parseInt(idNodo);
             this.num_mensajes = 1;
             this.sendExplorer = true;
+            /*Si el nodo solo tiene un vecinos y recibe un explorer, manda un eco */
+            if (this.num_vecinos == 1 ){
+                this.sendEco = true;
+            } 
         } 
         /* 
         Si el coordinador recibido es igual al coordiandor actual:
@@ -91,12 +99,13 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         */
         else if (Integer.parseInt(idCoord) == this.idCoordinador) {
             this.num_mensajes++;
+            System.out.println("Nodo " + Integer.toString(this.id) + " recibe explorer de " + idNodo + ", mensajes: " + this.num_mensajes);
             if (this.num_mensajes == (this.num_vecinos))
             {
                 if (this.iniciador)
                 {
                     this.coordinador = true;
-                    System.out.println("Soy Coordinador");
+                    System.out.println("Soy Coordinador (" + this.id + ")");
                 }   else    {
                     this.sendEco = true;
                 }
@@ -107,7 +116,8 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                 this.sendEco = true;
             }     
         }   else    {
-            System.out.println("Se extingue explorer");
+            System.out.println("Nodo " + Integer.toString(this.id) + " recibe explorer coordinador: " + idCoord +
+            ", Se extingue");
         }
     }
 
@@ -150,7 +160,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public static void listen(String id, InterfaceProceso k)
   	throws Exception
   	{
-    	System.setProperty("java.security.policy","file:/C:/Users/Pablo/Desktop/Git/Tarea2-SD/Proceso.policy");
+    	System.setProperty("java.security.policy","Proceso.policy");
      
     	if (System.getSecurityManager() == null) {
       		System.setSecurityManager(new SecurityManager());
