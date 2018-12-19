@@ -14,7 +14,7 @@ public class Proceso
             {
                 PClient.idCoordinador = PClient.id;
                 PClient.iniciador = true;
-                //send id's
+                //El iniciador envia explorer a sus vecinos
                 for (int i = 0;i < id_vecinos.length; i++)
                 {
                     PClient.invocar(id_vecinos[i]);
@@ -25,10 +25,9 @@ public class Proceso
             while (true)
             {
                 ProcesoClient.listen(id, PClient);
-                //Si recibio un mensaje con id mayor al actual
                 if (PClient.sendExplorer)
                 {
-                    //envia mensajes a vecinos, sin incluir el vecino del msj entrante
+                    //Aqui se envian explorer a los vecinos
                     for (int i = 0;i < id_vecinos.length; i++)
                     {
                         if (Integer.parseInt(id_vecinos[i]) != PClient.FL)
@@ -38,11 +37,12 @@ public class Proceso
                 }
                 if (PClient.sendEco)
                 {
+                    //Aqui se envia el eco
                     PClient.invocarEco(Integer.toString(PClient.FL));
                     PClient.sendEco = false;
                 }
                 if (PClient.coordinador){
-                    //do staf here
+                    //Aqui se hace la conexion al server cuando se elige coordinador
                 }
             }
         }catch(Exception e){
