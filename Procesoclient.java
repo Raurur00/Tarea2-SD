@@ -34,11 +34,12 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
   	throws RemoteException, Exception
   	{
         System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco coordinador: " + id);
-        if (Integer.toString(id) == Integer.toString(this.idCoordinador))
+        if (Integer.parseInt(id) == this.idCoordinador)
         {
-            this.num_mensajes++;//Si llega un eco se suma 1 al contador de mensajes
-            //Si es iniciador y el numero de mensajes recibidos es igual al numero de vecinos,
-            //el nodo es el nuevo coordinador
+            this.num_mensajes++;
+            /*Si llega un eco se suma 1 al contador de mensajes
+            Si es iniciador y el numero de mensajes recibidos es igual al numero de vecinos,
+            el nodo es el nuevo coordinador */
             if (this.num_mensajes == this.num_vecinos)
             {
                 if (this.iniciador){
@@ -47,14 +48,14 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                         System.out.println("Soy Coordinador");
                     }
                 } else {
-                    //Si no es iniciador y el numero de mensajes recibidos es igual al numero de vecinos menos 1,
-                    //el nodo mando un eco
+                    /*Si no es iniciador y el numero de mensajes recibidos es igual al numero de vecinos menos 1,
+                    el nodo mando un eco */
                     this.sendEco = true;
                 }   
             }
             
         }
-        else if Integer.toString(id) < Integer.toString(this.idCoordinador))
+        else if (Integer.parseInt(id) < this.idCoordinador)
         {
             System.out.println("Se extingue eco");
         }
@@ -101,13 +102,14 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                 }
             
             }
-            //Si el nodo solo tiene un vecinos y recibe un explorer, manda un eco
+            /*Si el nodo solo tiene un vecinos y recibe un explorer, manda un eco */
             if (this.num_vecinos == 1 ){
                 this.sendEco = true;
             }     
         }   else    {
             System.out.println("Se extingue explorer");
         }
+    }
 
     public void invocar(String id) 
     {
