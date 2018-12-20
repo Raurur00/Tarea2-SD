@@ -40,12 +40,15 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
   	{
         if (Integer.parseInt(id) == this.idCoordinador)
         {
+            this.num_mensajes++;
             System.out.println("Nodo " + Integer.toString(this.id) + " recibe eco coordinador: " + id 
             + ", mensajes: " + this.num_mensajes);
-            this.num_mensajes++;
-            /*Si llega un eco se suma 1 al contador de mensajes
- *             Si es iniciador y el numero de mensajes recibidos es igual al numero de vecinos,
- *                         el nodo es el nuevo coordinador */
+            
+            /*
+            Si llega un eco se suma 1 al contador de mensajes
+            Si es iniciador y el numero de mensajes recibidos es igual al numero de vecinos,
+            el nodo es el nuevo coordinador 
+            */
             if (this.num_mensajes == this.num_vecinos)
             {
                 if (this.iniciador){
@@ -54,8 +57,10 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                         System.out.println("Soy Coordinador (" + this.id + ")");
                     }
                 } else {
-                    /*Si no es iniciador y el numero de mensajes recibidos es igual al numero de vecinos menos 1,
- *                     el nodo mando un eco */
+                    /*
+                    Si no es iniciador y el numero de mensajes recibidos es igual al numero de vecinos menos 1,
+                    el nodo mando un eco 
+                    */
                     this.sendEco = true;
                 }   
             }
@@ -74,12 +79,12 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
   	throws RemoteException, Exception
   	{
         /* 
- *         Si el coordinador recibido es mayor al coordiandor actual:
- *                  - Cambia al coordiandor
- *                           - Cambia el First Link a la id del nodo de donde recibio el mensaje
- *                                    - Pone el contador de ecos en 0
- *                                             - Manda explorers a los vecions
- *                                                     */
+        Si el coordinador recibido es mayor al coordiandor actual:
+        - Cambia al coordiandor
+        - Cambia el First Link a la id del nodo de donde recibio el mensaje
+        - Pone el contador de ecos en 0
+        - Manda explorers a los vecions
+        */
     	if (Integer.parseInt(idCoord) > this.idCoordinador) 
         {
 	    this.iniciador = false;
@@ -95,13 +100,13 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
             } 
         } 
         /* 
- *         Si el coordinador recibido es igual al coordiandor actual:
- *                  - Suma 1 al contador de ecos
- *                           - Si es iniciador verifica si el numero de vecinos es igual al numero de ecos
- *                                       - Si es igual, se vuelver coordiandor
- *                                               - Si no es iniciador verifica si el numero de vecinos menos 1 es igual al numero de ecos
- *                                                           - Si es igual manda un eco
- *                                                                   */
+        Si el coordinador recibido es igual al coordiandor actual:
+        - Suma 1 al contador de ecos
+        - Si es iniciador verifica si el numero de vecinos es igual al numero de ecos
+        - Si es igual, se vuelver coordiandor
+        - Si no es iniciador verifica si el numero de vecinos menos 1 es igual al numero de ecos
+        - Si es igual manda un eco
+        */
         else if (Integer.parseInt(idCoord) == this.idCoordinador) {
             System.out.println("Nodo " + Integer.toString(this.id) + " recibe explorer de " + idNodo + ", mensajes: " + this.num_mensajes);
             this.num_mensajes++;
