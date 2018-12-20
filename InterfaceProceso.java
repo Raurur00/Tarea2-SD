@@ -7,4 +7,6 @@ public abstract interface InterfaceProceso extends Remote {
 
   public abstract void explorer(String idCoord, String idNodo) throws RemoteException, Exception;
 
+  public abstract void sendMensaje(String id, String mensaje) throws RemoteException, Exception;
+
 }

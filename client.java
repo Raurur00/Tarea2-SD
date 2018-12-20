@@ -6,13 +6,14 @@ import java.io.IOException;
 
 public class client {
 
-    private client() {}
+    public client() {}
     //Conexión con servidor (Esto debe ser ejecutado por el proceso coordinador)
-    public static void Descifrar(String ruta_archivo, String ip_server) {
+    public static String Descifrar(String ruta_archivo, String ip_server) {
 
 		BufferedReader br = null;
 		FileReader fr = null;
         String mensajeCifrado = "";
+		String numberGroup = "grupo_17";
 		try {
 
 			//br = new BufferedReader(new FileReader(FILENAME));
@@ -40,11 +41,10 @@ public class client {
             Registry registry = LocateRegistry.getRegistry(ip_server);
             InterfaceServer stub = (InterfaceServer) registry.lookup("PublicKey");
             String uk = stub.getKey(numberGroup);
-            String mensajeDescifrado = stub.decipher(numberGroup, mensajeCifrado, uk)
-            System.out.println("response: " + mensajeDescifrado);
+            String mensajeDescifrado = stub.decipher(numberGroup, mensajeCifrado, uk);
+			return mensajeDescifrado;
         } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
-            e.printStackTrace();
+            return "error";
         }
     }
 }
