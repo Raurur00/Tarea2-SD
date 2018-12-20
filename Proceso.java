@@ -33,7 +33,6 @@ public class Proceso
                 if (PClient.coordinador)
                 {
                     PClient.Descifrar(ruta_archivo,ip_server);
-                    System.out.println(PClient.mensajeDescifrado);
                      for (int i = 0;i < id_vecinos.length; i++)
                     {
                         PClient.invocar(id_vecinos[i], 2, PClient.mensajeDescifrado);

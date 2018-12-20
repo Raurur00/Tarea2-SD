@@ -4,6 +4,9 @@ import java.rmi.RemoteException;
 import java.rmi.Remote;
 import java.rmi.Naming;
 import java.rmi.server.UnicastRemoteObject;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ProcesoClient extends UnicastRemoteObject implements InterfaceProceso {
     public int id;
@@ -12,7 +15,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public int num_mensajes;
     public boolean sendExplorer;
     public boolean sendEco;
-    public boolean sendMenasje;
+    public boolean sendMensaje;
     public int FL;
     public boolean iniciador;
     public boolean coordinador;
@@ -41,6 +44,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public void sendMensaje(String id, String mensaje)
     throws RemoteException, Exception
     {
+        System.out.println("Nodo " + this.id + " recibe mensaje descifrado de " + id +"(mensaje:" + mensaje + ")");
         this.mensajeDescifrado = mensaje;
         this.sendMensaje = true;
     }
@@ -161,7 +165,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                     System.out.println("Nodo " + this.id + " manda eco a " + id);
                 }   else    {
                     stub.sendMensaje(Integer.toString(this.idCoordinador), mensaje);
-                    System.out.println("Nodo " + this.id + " manda mensaje a " + id);
+                    System.out.println("Nodo " + this.id + " manda mensaje descifrado a " + id);
                 }
                 flag = false;
             } catch (Exception e) {
@@ -192,9 +196,8 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         FileReader fr = null;
         String mensajeCifrado = "";
         String numberGroup = "grupo_17";
-        try {
-
-            //br = new BufferedReader(new FileReader(FILENAME));
+        try 
+        {
             fr = new FileReader(ruta_archivo);
             br = new BufferedReader(fr);
             String sCurrentLine;
