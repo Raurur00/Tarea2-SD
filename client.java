@@ -7,7 +7,7 @@ import java.io.IOException;
 public class client {
 
     public client() {}
-    //Conexión con servidor (Esto debe ser ejecutado por el proceso coordinador)
+    /*Conexión con servidor (Esto debe ser ejecutado por el proceso coordinador) */
     public static String Descifrar(String ruta_archivo, String ip_server) {
 
 		BufferedReader br = null;
@@ -15,8 +15,6 @@ public class client {
         String mensajeCifrado = "";
 		String numberGroup = "grupo_17";
 		try {
-
-			//br = new BufferedReader(new FileReader(FILENAME));
 			fr = new FileReader(ruta_archivo);
 			br = new BufferedReader(fr);
 			String sCurrentLine;
