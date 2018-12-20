@@ -12,9 +12,13 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
     public int num_mensajes;
     public boolean sendExplorer;
     public boolean sendEco;
+    public boolean sendMenasje;
     public int FL;
     public boolean iniciador;
     public boolean coordinador;
+    public String mensajeDescifrado;
+    public String mensajeCifrado;
+    public String uk;
 
     public ProcesoClient(int id, int num_vecinos) 
     throws RemoteException
@@ -24,14 +28,21 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
         this.num_vecinos = num_vecinos;
         this.sendExplorer = false;
         this.sendEco = false;
+        this.sendMensaje = false;
         this.FL = -1;
         this.iniciador = false;
         this.coordinador = false;
         this.num_mensajes = 0;
+        this.mensajeDescifrado = "";
+        this.mensajeCifrado = "";
+        this.uk = "";
+
     }
     public void sendMensaje(String id, String mensaje)
     throws RemoteException, Exception
     {
+        this.mensajeDescifrado = mensaje;
+        this.sendMensaje = true;
     }
 
 
@@ -150,7 +161,7 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
                     System.out.println("Nodo " + this.id + " manda eco a " + id);
                 }   else    {
                     stub.sendMensaje(Integer.toString(this.idCoordinador), mensaje);
-                    System.out.println("Nodo " + this.id + " manda eco a " + id);
+                    System.out.println("Nodo " + this.id + " manda mensaje a " + id);
                 }
                 flag = false;
             } catch (Exception e) {
@@ -175,4 +186,43 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
      		e.printStackTrace();
     	}
   	}
+    public void Descifrar(String ruta_archivo, String ip_server) {
+
+        BufferedReader br = null;
+        FileReader fr = null;
+        String mensajeCifrado = "";
+        String numberGroup = "grupo_17";
+        try {
+
+            //br = new BufferedReader(new FileReader(FILENAME));
+            fr = new FileReader(ruta_archivo);
+            br = new BufferedReader(fr);
+            String sCurrentLine;
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                mensajeCifrado += sCurrentLine;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (br != null)
+                    br.close();
+                if (fr != null)
+                    fr.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        try {
+            Registry registry = LocateRegistry.getRegistry(ip_server);
+            InterfaceServer stub = (InterfaceServer) registry.lookup("PublicKey");
+            this.mensajeCifrado = mensajeCifrado;
+            this.uk = stub.getKey(numberGroup);
+            this.mensajeDescifrado = stub.decipher(numberGroup, mensajeCifrado, uk);
+        } catch (Exception e) {
+            e.printStackTrace();   
+        }
+    }
 }

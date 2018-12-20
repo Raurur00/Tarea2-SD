@@ -29,14 +29,25 @@ public class Proceso
             /*Espera algun mensaje de un vecino */
             while (true)
             {
+                ProcesoClient.listen(id, PClient);
                 if (PClient.coordinador)
                 {
-                    client Client =  new client();
-                    String mensaje = client.Descifrar(ruta_archivo,ip_server);
-                    System.out.println(mensaje);
+                    PClient.Descifrar(ruta_archivo,ip_server);
+                    System.out.println(PClient.mensajeDescifrado);
+                     for (int i = 0;i < id_vecinos.length; i++)
+                    {
+                        PClient.invocar(id_vecinos[i], 2, PClient.mensajeDescifrado);
+                    }
+                    break;
 
+                } else if (PClient.sendMensaje){
+                    for (int i = 0;i < id_vecinos.length; i++)
+                    {
+                        if (Integer.parseInt(id_vecinos[i]) != PClient.FL)
+                            PClient.invocar(id_vecinos[i], 2,PClient.mensajeDescifrado);
+                    }
+                    PClient.sendMensaje = false;
                 }
-                ProcesoClient.listen(id, PClient);
                 if (PClient.sendExplorer)
                 {
                     /*Aqui se envian explorer a los vecinos */
@@ -52,9 +63,6 @@ public class Proceso
                     /*Aqui se envia el eco */
                     PClient.invocar(Integer.toString(PClient.FL), 1, "");
                     PClient.sendEco = false;
-                }
-                if (PClient.coordinador){
-                    /*Aqui se hace la conexion al server cuando se elige coordinador */
                 }
             }
         }catch(Exception e){
