@@ -8,6 +8,7 @@ public class Proceso
         ProcesoClient PClient;
         String ruta_archivo = "";
         String ip_server = "";
+        boolean end = false;
 
 
         try{
@@ -27,25 +28,29 @@ public class Proceso
             }
 
             /*Espera algun mensaje de un vecino */
-            while (true)
+            while (!end)
             {
                 ProcesoClient.listen(id, PClient);
                 if (PClient.coordinador)
                 {
+                    /* Si se eligio el coordinador, este envia el mensaje descifrado */
                     PClient.Descifrar(ruta_archivo,ip_server);
-                     for (int i = 0;i < id_vecinos.length; i++)
+                    for (int i = 0;i < id_vecinos.length; i++)
                     {
                         PClient.invocar(id_vecinos[i], 2, PClient.mensajeDescifrado);
                     }
-                    break;
+                    end = true;
 
                 } else if (PClient.sendMensaje){
+                    /* Si no es el coordinador pero le llega el mensaje, se lo envia a sus demas vecinos
+                    solo una vez */
                     for (int i = 0;i < id_vecinos.length; i++)
                     {
                         if (Integer.parseInt(id_vecinos[i]) != PClient.FL)
-                            PClient.invocar(id_vecinos[i], 2,PClient.mensajeDescifrado);
+                            PClient.invocar(id_vecinos[i], 2, PClient.mensajeDescifrado);
                     }
                     PClient.sendMensaje = false;
+                    end = true;
                 }
                 if (PClient.sendExplorer)
                 {

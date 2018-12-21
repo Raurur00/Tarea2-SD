@@ -224,6 +224,11 @@ public class ProcesoClient extends UnicastRemoteObject implements InterfaceProce
             this.mensajeCifrado = mensajeCifrado;
             this.uk = stub.getKey(numberGroup);
             this.mensajeDescifrado = stub.decipher(numberGroup, mensajeCifrado, uk);
+            System.out.println("Coordinador se conecta al server para descifrar mensaje");
+            System.out.println("uk: " + this.uk);
+            System.out.println("mensaje cifrado: " + mensajeCifrado);
+            System.out.println("mensaje descifrado: " + mensajeDescifrado);
+
         } catch (Exception e) {
             e.printStackTrace();   
         }
